@@ -19,8 +19,6 @@ import '../log_printer.dart';
 /// └──────────────────────────
 /// ```
 class PrettyPrinter extends LogPrinter {
-  static const topLeftCorner = '┌';
-  static const bottomLeftCorner = '└';
   static const middleCorner = '├';
   static const verticalLine = '│';
   static const doubleDivider = '─';
@@ -61,8 +59,7 @@ class PrettyPrinter extends LogPrinter {
   /// For example:
   /// * dart:sdk_internal
   /// * package:logger/src/logger.dart
-  static final _browserStackTraceRegex =
-      RegExp(r'^(?:package:)?(dart:\S+|\S+)');
+  static final _browserStackTraceRegex = RegExp(r'^(?:package:)?(dart:\S+|\S+)');
 
   static DateTime? _startTime;
 
@@ -102,9 +99,6 @@ class PrettyPrinter extends LogPrinter {
   /// See also:
   /// * [methodCount]
   final int? errorMethodCount;
-
-  /// Controls the length of the divider lines.
-  final int lineLength;
 
   /// Whether ansi colors are used to color the output.
   final bool colors;
@@ -188,7 +182,6 @@ class PrettyPrinter extends LogPrinter {
     this.stackTraceBeginIndex = 0,
     this.methodCount = 2,
     this.errorMethodCount = 8,
-    this.lineLength = 120,
     this.colors = true,
     this.printEmojis = true,
     this.printTime = false,
@@ -200,16 +193,7 @@ class PrettyPrinter extends LogPrinter {
   }) {
     _startTime ??= DateTime.now();
 
-    var doubleDividerLine = StringBuffer();
-    var singleDividerLine = StringBuffer();
-    for (var i = 0; i < lineLength - 1; i++) {
-      doubleDividerLine.write(doubleDivider);
-      singleDividerLine.write(singleDivider);
-    }
-
-    _topBorder = '$topLeftCorner$doubleDividerLine';
-    _middleBorder = '$middleCorner$singleDividerLine';
-    _bottomBorder = '$bottomLeftCorner$doubleDividerLine';
+    _middleBorder = middleCorner;
 
     // Translate excludeBox map (constant if default) to includeBox map with all Level enum possibilities
     _includeBox = {};
@@ -268,8 +252,7 @@ class PrettyPrinter extends LogPrinter {
         .toList();
     List<String> formatted = [];
 
-    int stackTraceLength =
-        (methodCount != null ? min(lines.length, methodCount) : lines.length);
+    int stackTraceLength = (methodCount != null ? min(lines.length, methodCount) : lines.length);
     for (int count = 0; count < stackTraceLength; count++) {
       var line = lines[count];
       if (count < stackTraceBeginIndex) {
@@ -312,8 +295,7 @@ class PrettyPrinter extends LogPrinter {
       return false;
     }
     final segment = match.group(1)!;
-    if (segment.startsWith('packages/logger') ||
-        segment.startsWith('dart-sdk/lib')) {
+    if (segment.startsWith('packages/logger') || segment.startsWith('dart-sdk/lib')) {
       return true;
     }
     return _isInExcludePaths(segment);
